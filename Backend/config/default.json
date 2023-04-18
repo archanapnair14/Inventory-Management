@@ -1,0 +1,5 @@
+{
+    "mongoURI":
+    "mongodb+srv://Archana:Archana@cluster0.d5wvbdh.mongodb.net/Inventorymanagement_DB?retryWrites=true&w=majority"
+}
+
