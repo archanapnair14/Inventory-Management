@@ -1,15 +1,68 @@
 import { useForm } from "react-hook-form";
-import { TextField, Button, Container, Grid, Typography,Select,MenuItem } from "@mui/material";
-const CreateItem = () => {
+import {
+  TextField,
+  Button,
+  Container,
+  Grid,
+  Typography,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import { useState, useEffect } from "react";
+import Axios from "axios";
+const AddItem = () => {
+  const [file, setFileData] = useState(null);
+  const [categories, setCategory] = useState([]);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
+
+  const handleFileChange = (e) => {
+    const fileData = e.target.files[0];
+    console.log(fileData);
+    setFileData(fileData);
+  };
+
+  useEffect(() => {
+    Axios.get("http://localhost:3001/category").then((response) => {
+      setCategory(response.data);
+      console.log(response.data);
+    });
+  }, []);
 
   const onSubmit = (data) => {
     console.log(data);
-    // Save item data to database
+    const formData = new FormData();
+    formData.append("itemName", data.itemName);
+    formData.append("unit", data.unit);
+    formData.append("sellingPrice", data.sellingPrice);
+    formData.append("costPrice", data.costPrice);
+    formData.append("dimension", data.dimension);
+    formData.append("weight", data.weight);
+    formData.append("manufacturer", data.manufacturer);
+    formData.append("brand", data.brand);
+    formData.append("description", data.description);
+    formData.append("openingStock", data.openingStock);
+    formData.append("reorderPoint", data.reorderPoint);
+    formData.append("preferredvendor", data.preferredVendor);
+    formData.append("category", data.category);
+    formData.append("files", file);
+    formData.append("estatus", "Not Edited");
+
+    fetch("http://localhost:3001/additems", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+
+    reset();
   };
   return (
     <Container maxWidth="sm" sx={{ mt: 3 }}>
@@ -76,7 +129,7 @@ const CreateItem = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Select
+            <TextField
               {...register("brand", {
                 required: "Brand is required",
               })}
@@ -85,10 +138,24 @@ const CreateItem = () => {
               label="Brand"
               error={Boolean(errors.brand)}
               helperText={errors.brand?.message}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Select
+              {...register("category", {
+                required: "Category is required",
+              })}
+              variant="outlined"
+              fullWidth
+              label="category"
+              error={Boolean(errors.category)}
+              helperText={errors.category?.message}
             >
-              <MenuItem value="Brand 1">Brand 1</MenuItem>
-              <MenuItem value="Brand 2">Brand 2</MenuItem>
-              <MenuItem value="Brand 3">Brand 3</MenuItem>
+              {categories.map((cat) => (
+                <MenuItem key={cat._id} value={cat.category}>
+                  {cat.category}
+                </MenuItem>
+              ))}
             </Select>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -172,6 +239,7 @@ const CreateItem = () => {
               error={!!errors?.files}
               helperText={errors?.files && errors.files.message}
               accept="application/pdf"
+              onChange={handleFileChange}
             />
           </Grid>
         </Grid>
@@ -188,4 +256,4 @@ const CreateItem = () => {
   );
 };
 
-export default CreateItem;
+export default AddItem;

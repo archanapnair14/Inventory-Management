@@ -1,16 +1,40 @@
 import { useForm } from "react-hook-form";
 import { TextField, Button, Container, Grid, Typography } from "@mui/material";
+import { useState } from "react";
 
 const CreateItemGroup = () => {
+  const [file, setFileData] = useState(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
+
+  const handleFileChange = (e) => {
+    const fileData = e.target.files[0];
+    console.log(fileData);
+    setFileData(fileData);
+  };
 
   const onSubmit = (data) => {
     console.log(data);
-    // Save item group data to database
+    const formData = new FormData();
+    formData.append("category", data.category);
+    formData.append("description", data.description);
+    formData.append("files", file);
+
+    fetch("http://localhost:3001/addgroup", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+
+    reset();
   };
 
   return (
@@ -27,12 +51,12 @@ const CreateItemGroup = () => {
           </Typography>
           <Grid item xs={12}>
             <TextField
-              {...register("brandName", { required: true })}
+              {...register("category", { required: true })}
               variant="outlined"
               fullWidth
-              label="Brand Name"
-              error={Boolean(errors.brandName)}
-              helperText={errors.brandName && "Brand name is required"}
+              label="Category"
+              error={Boolean(errors.category)}
+              helperText={errors.category && "Category is required"}
             />
           </Grid>
           <Grid item xs={12}>
@@ -56,6 +80,7 @@ const CreateItemGroup = () => {
               error={!!errors?.files}
               helperText={errors?.files && errors.files.message}
               accept="application/pdf"
+              onChange={handleFileChange}
             />
           </Grid>
         </Grid>
