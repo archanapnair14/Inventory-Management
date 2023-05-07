@@ -14,6 +14,7 @@ import Page from "./Components/Page";
 import AddCustomer from "./Components/AddCustomer";
 import TotalCustomers from "./Components/TotalCustomers";
 import EditCustomer from "./Components/EditCustomer";
+import NewSalesOrder from "./Components/NewSalesOrder";
 
 function App() {
   return (
@@ -36,6 +37,8 @@ function App() {
         <Route exact path="/customer" element={<AddCustomer/>} />
         <Route exact path="/customers" element={<TotalCustomers/>} />
         <Route exact path="/editcustomer/:id" element={<EditCustomer/>} />
+        <Route exact path="/sales" element={<NewSalesOrder/>} />
+
 
 
 

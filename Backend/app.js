@@ -13,6 +13,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { customerModel } = require("./model/customer");
+const Salesorders = require("./model/salesSchema");
 
 const app = express();
 app.use(BodyParser.json());
@@ -320,7 +321,6 @@ app.post("/customer", async (req, res) => {
   }
 });
 
-
 // FETCH CUSTOMERS
 app.get("/allcustomers", async (req, res) => {
   try {
@@ -353,6 +353,97 @@ app.get("/customer/:id", async (req, res) => {
     res.send(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+// EDIT CUSTOMERS
+app.put("/editcustomers/:id", async (req, res) => {
+  const id = req.params.id;
+  const { name, email, address } = req.body;
+
+  try {
+    const customer = await customerModel.findByIdAndUpdate(
+      id,
+      {
+        name: name,
+        email: email,
+        address: address,
+      },
+      { new: true }
+    );
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    res.json(customer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+//SALES ORDER
+
+app.post("/newsalesorder", async (req, res) => {
+  const { customername, itemname, squantity, shipcost, sodate, status } =
+    req.body;
+
+  try {
+    const cdetails = await customerModel.findOne({ name: customername });
+    const idetails = await AllItems.findOne({ itemName: itemname });
+
+    if (!idetails) {
+      throw new Error(`Item '${itemname}' not found`);
+    }
+
+    const sq = parseInt(squantity);
+
+    if (!Number.isInteger(sq)) {
+      throw new Error(`Invalid quantity '${squantity}'`);
+    }
+
+    const quant = idetails.unit - sq;
+
+    await AllItems.updateOne(
+      {
+        itemName: itemname,
+      },
+      {
+        $set: {
+          unit: quant,
+        },
+      }
+    );
+
+    const address = cdetails.address;
+    const cid = cdetails._id;
+    const sc = parseInt(shipcost);
+    const amount = idetails.sellingPrice * sq + sc;
+    const pamount = amount;
+
+    const salesorder = new Salesorders({
+      customername,
+      address,
+      cid,
+      itemname,
+      squantity,
+      shipcost,
+      amount,
+      pamount,
+      sodate,
+      status,
+    });
+
+    const soRegister = await salesorder.save();
+    if (soRegister) {
+      res.status(201).json({ message: "Sales order registered" });
+    } else {
+      res.status(500).json({ error: "Failed to register" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
