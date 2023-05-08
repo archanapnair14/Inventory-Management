@@ -14,6 +14,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { customerModel } = require("./model/customer");
 const Salesorders = require("./model/salesSchema");
+const { Shipment } = require("./model/ShipmentSchema");
+const Vendors = require("./model/vendorSchema");
+const Purchases = require("./model/purchaseSchema");
 
 const app = express();
 app.use(BodyParser.json());
@@ -390,8 +393,8 @@ app.post("/newsalesorder", async (req, res) => {
     req.body;
 
   try {
-    const cdetails = await customerModel.findOne({ name: customername });
-    const idetails = await AllItems.findOne({ itemName: itemname });
+    const cdetails = await customerModel.findOne({ email: customername });
+    const idetails = await AllItems.findOne({ _id: itemname });
 
     if (!idetails) {
       throw new Error(`Item '${itemname}' not found`);
@@ -407,7 +410,7 @@ app.post("/newsalesorder", async (req, res) => {
 
     await AllItems.updateOne(
       {
-        itemName: itemname,
+        _id: itemname,
       },
       {
         $set: {
@@ -426,7 +429,7 @@ app.post("/newsalesorder", async (req, res) => {
       customername,
       address,
       cid,
-      itemname,
+      itemname: idetails._id,
       squantity,
       shipcost,
       amount,
@@ -446,6 +449,284 @@ app.post("/newsalesorder", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.get("/confirmeditems", async (req, res) => {
+  try {
+    const confirmedItems = await Salesorders.find({ status: "confirmed" });
+
+    if (confirmedItems.length === 0) {
+      return res.status(404).json({ message: "No confirmed items found" });
+    }
+
+    res.status(200).json(confirmedItems);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/sales/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await Salesorders.findOne({ _id: id });
+    res.send(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.get("/items/:itemname", async (req, res) => {
+  try {
+    const item = req.params.itemname;
+    const result = await AllItems.findOne({ _id: item });
+    res.send(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.get("/allitems/:_id", async (req, res) => {
+  try {
+    const item = req.params._id;
+    const result = await AllItems.findOne({ _id: item });
+    res.send(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.post("/shipment", async (req, res) => {
+  try {
+    // Extract the data from the request body
+    const { salesid, trackingno, tamount, sdate } = req.body;
+
+    // Create a new shipment object and save it to the database
+    const newShipment = new Shipment({
+      salesid,
+      trackingno,
+      tamount,
+      sdate,
+    });
+    await newShipment.save();
+
+    // Update the status field of the sales order to "shipped"
+    const salesorder = await Salesorders.findOneAndUpdate(
+      { _id: salesid },
+      { status: "shipment created" },
+      { new: true }
+    );
+
+    // Send a success response
+    res
+      .status(200)
+      .json({ message: "Shipment created successfully", data: salesorder });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.get("/deliveryitems", async (req, res) => {
+  try {
+    const Items = await Salesorders.find({ status: "shipment created" });
+
+    if (Items.length === 0) {
+      return res.status(404).json({ message: "No items found" });
+    }
+
+    res.status(200).json(Items);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/addvendor", async (req, res) => {
+  const { vendorname, address, email, vphno } = req.body;
+
+  if (!vendorname || !address || !email || !vphno) {
+    return res.status(400).json({ message: "Please enter all fields" });
+  }
+
+  try {
+    const user = await Vendors.findOne({ email });
+    if (user) throw Error("User already exists");
+
+    console.log(req.body);
+    console.log(req.body);
+    let data = new Vendors({
+      vendorname: req.body.vendorname,
+      address: req.body.address,
+      email: req.body.email,
+      vphno: req.body.vphno,
+    });
+    console.log(data);
+    await data.save();
+
+    res.json({ status: "success", data: data });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// FETCH VENDORS
+app.get("/allvendors", async (req, res) => {
+  try {
+    const Items = await Vendors.find();
+    res.json(Items);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// FETCH VENDOR BY ID
+app.get("/vendors/:id", async (req, res) => {
+  try {
+    var id = req.params.id;
+    var data = req.body;
+    const result = await Vendors.findById({ _id: id }, data);
+    res.send(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// EDIT VENDORS
+app.put("/editvendors/:id", async (req, res) => {
+  const id = req.params.id;
+  const { vendorname, address, email, vphno } = req.body;
+
+  try {
+    const vendor = await Vendors.findByIdAndUpdate(
+      id,
+      {
+        vendorname: vendorname,
+        address: address,
+        email: email,
+        vphno: vphno,
+      },
+      { new: true }
+    );
+
+    if (!vendor) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    res.json(vendor);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ADD PURCHASE
+app.post("/addpurchase", async (req, res) => {
+  const { vendorname, itemname, quantity, amount, status } = req.body;
+  try {
+    const purchase = new Purchases({
+      vendorname,
+      itemname,
+      quantity,
+      amount,
+      status,
+    });
+    const purchaseRegister = await purchase.save();
+    if (purchaseRegister) {
+      res.status(201).json({ message: "Purchase registered" });
+    } else {
+      res.status(500).json({ error: "Failed to register" });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// PAYMENTS
+app.get("/payments", async (req, res) => {
+  try {
+    const Items = await Purchases.find({ status: "payment pending" });
+
+    if (Items.length === 0) {
+      return res.status(404).json({ message: "No items found" });
+    }
+
+    res.status(200).json(Items);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update payment status
+app.put('/completed/:id', async (req, res) => {
+  try {
+    const payment = await Purchases.findById(req.params.id);
+    if (!payment) {
+      return res.status(404).json({ message: 'Payment not found' });
+    }
+    payment.status = 'payment completed';
+    const updatedPayment = await payment.save();
+    res.json(updatedPayment);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+app.get("/completedpay", async (req, res) => {
+  try {
+    const Items = await Purchases.find({ status: "payment completed" });
+
+    if (Items.length === 0) {
+      return res.status(404).json({ message: "No items found" });
+    }
+
+    res.status(200).json(Items);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+app.get('/items/:itemname/:id', async (req, res) => {
+  try {
+    const { itemname, id } = req.params;
+
+    const item = await AllItems.findOne({ ItemName: itemname });
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    const sale = await Salesorders.findById(id);
+    if (!sale) {
+      return res.status(404).json({ message: 'Sale not found' });
+    }
+
+    const data = {
+      item: item,
+      sale: sale
+    };
+
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.get("/shipment/:salesid", async (req, res) => {
+  try {
+    var id = req.params.salesid;
+    var data = req.body;
+    const result = await Vendors.findById({ salesid: id }, data);
+    res.send(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Server running on port ${port}`));

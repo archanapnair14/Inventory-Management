@@ -40,12 +40,6 @@ const NewSalesOrder = () => {
     });
   }, []);
 
-  const validateDate = (value) => {
-    const inputDate = new Date(value);
-    const currentDate = new Date();
-    return inputDate > currentDate || "Date cannot be in the past";
-  };
-
   const onSubmit = (data) => {
     console.log(data);
     fetch("http://localhost:3001/newsalesorder", {
@@ -93,7 +87,7 @@ const NewSalesOrder = () => {
             >
               <MenuItem value="">Select</MenuItem>
               {cdetails.map((val, key) => (
-                <MenuItem key={key} value={val.name}>
+                <MenuItem key={key} value={val.email}>
                   {val.name}
                 </MenuItem>
               ))}
@@ -102,7 +96,6 @@ const NewSalesOrder = () => {
 
           <Grid item xs={12} sm={6}>
             <InputLabel>Item Name</InputLabel>
-
             <Select
               {...register("itemname", {
                 required: "Itemname is required",
@@ -115,7 +108,7 @@ const NewSalesOrder = () => {
             >
               <MenuItem value="">Select</MenuItem>
               {idetails.map((val, key) => (
-                <MenuItem key={key} value={val.itemName}>
+                <MenuItem key={key} value={val._id}>
                   {val.itemName}
                 </MenuItem>
               ))}
