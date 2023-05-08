@@ -14,16 +14,19 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
-import { Link } from "react-router-dom";
-const DeliveryChallans = () => {
+import { useNavigate } from "react-router-dom";
+const PaymentsRecievded = () => {
   const [items, setItems] = useState([]);
   const [customer, setCustomer] = useState();
-  const [tno, setTno] = useState();
+  const [data, setData] = useState();
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const cdate = currentDate.toLocaleString();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/deliveryitems").then((response) => {
+    Axios.get("http://localhost:3001/saleslist").then((response) => {
       setItems(response.data);
-      //   console.log(response.data);
+      console.log(response.data);
     });
   }, []);
 
@@ -34,11 +37,18 @@ const DeliveryChallans = () => {
     });
   };
 
+  const fetchItemName = (id) => {
+    Axios.get(`http://localhost:3001/allitems/${id}`).then((response) => {
+      setData(response.data);
+      console.log(response.data);
+    });
+  };
+
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Typography variant="h4" align="center" gutterBottom>
-          DELIVERY - CHALLANS
+      <Grid item xs={10}>
+        <Typography variant="h6" align="center" gutterBottom>
+          CUSTOMER - PAYMENTS
         </Typography>
       </Grid>
       <Grid item xs={10}>
@@ -49,9 +59,9 @@ const DeliveryChallans = () => {
                 <TableCell>CUSTOMER NAME</TableCell>
                 <TableCell>ADDRESS</TableCell>
                 <TableCell>EMAIL</TableCell>
-                <TableCell>AMOUNT</TableCell>
-                <TableCell>ORDER DATE</TableCell>
-                <TableCell>ACTION</TableCell>
+                <TableCell>ITEM NAME</TableCell>
+                <TableCell>UNIT</TableCell>
+                <TableCell>PRICE</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -61,14 +71,10 @@ const DeliveryChallans = () => {
                   <TableCell>{customer?.name}</TableCell>
                   <TableCell>{item.address}</TableCell>
                   <TableCell>{item.customername}</TableCell>
+                  {fetchItemName(item.itemname)}
+                  <TableCell>{data?.itemName}</TableCell>
+                  <TableCell>{item.squantity}</TableCell>
                   <TableCell>{item.amount}</TableCell>
-                  <TableCell>{item.sodate}</TableCell>
-
-                  <TableCell>
-                    <Link to={`/challan_generate/${item._id}`}>
-                      Generate Challans
-                    </Link>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -79,4 +85,4 @@ const DeliveryChallans = () => {
   );
 };
 
-export default DeliveryChallans;
+export default PaymentsRecievded;

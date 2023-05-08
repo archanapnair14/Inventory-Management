@@ -17,6 +17,9 @@ const Salesorders = require("./model/salesSchema");
 const { Shipment } = require("./model/ShipmentSchema");
 const Vendors = require("./model/vendorSchema");
 const Purchases = require("./model/purchaseSchema");
+const DeliveryChallan = require("./model/deliveryChallans");
+const { Invoice } = require("./model/invoiceModel");
+const { salesReturns } = require("./model/salesReturn");
 
 const app = express();
 app.use(BodyParser.json());
@@ -659,20 +662,19 @@ app.get("/payments", async (req, res) => {
 });
 
 // Update payment status
-app.put('/completed/:id', async (req, res) => {
+app.put("/completed/:id", async (req, res) => {
   try {
     const payment = await Purchases.findById(req.params.id);
     if (!payment) {
-      return res.status(404).json({ message: 'Payment not found' });
+      return res.status(404).json({ message: "Payment not found" });
     }
-    payment.status = 'payment completed';
+    payment.status = "payment completed";
     const updatedPayment = await payment.save();
     res.json(updatedPayment);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 app.get("/completedpay", async (req, res) => {
   try {
@@ -689,41 +691,218 @@ app.get("/completedpay", async (req, res) => {
   }
 });
 
-
-app.get('/items/:itemname/:id', async (req, res) => {
+app.get("/items/:itemname/:id", async (req, res) => {
   try {
     const { itemname, id } = req.params;
 
     const item = await AllItems.findOne({ ItemName: itemname });
     if (!item) {
-      return res.status(404).json({ message: 'Item not found' });
+      return res.status(404).json({ message: "Item not found" });
     }
 
     const sale = await Salesorders.findById(id);
     if (!sale) {
-      return res.status(404).json({ message: 'Sale not found' });
+      return res.status(404).json({ message: "Sale not found" });
     }
 
     const data = {
       item: item,
-      sale: sale
+      sale: sale,
     };
 
     res.json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-app.get("/shipment/:salesid", async (req, res) => {
+app.get("/shipment/:salesId/trackingno", async (req, res) => {
   try {
-    var id = req.params.salesid;
-    var data = req.body;
-    const result = await Vendors.findById({ salesid: id }, data);
-    res.send(result);
+    const id = req.params.salesId;
+    const shipment = await Shipment.findOne({ salesid: id });
+    if (!shipment) {
+      return res.status(404).json({ message: "Shipment not found" });
+    }
+    const { trackingno } = shipment;
+    res.json({ trackingno });
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+app.post("/deliverychallan", async (req, res) => {
+  const { refno, deliverydate, salesId } = req.body;
+
+  try {
+    // Store delivery challan data
+    const deliveryChallan = await DeliveryChallan.create({
+      refno,
+      deliverydate,
+      salesId,
+    });
+
+    // Update status of sales schema to "shipped"
+    const sales = await Salesorders.findOneAndUpdate(
+      { _id: salesId },
+      { status: "shipped" },
+      { new: true }
+    );
+
+    res.status(200).json({ deliveryChallan, sales });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message:
+        "Error occurred while storing delivery challan and updating sales status.",
+    });
+  }
+});
+
+// FETCH DELIVERYCHALLANS
+app.get("/deliverychallan", async (req, res) => {
+  try {
+    const Items = await DeliveryChallan.find();
+    res.json(Items);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/sales", async (req, res) => {
+  try {
+    const Items = await Salesorders.find({ status: "shipped" });
+
+    if (Items.length === 0) {
+      return res.status(404).json({ message: "No items found" });
+    }
+
+    res.status(200).json(Items);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/saleslist", async (req, res) => {
+  try {
+    const Items = await Salesorders.find({ status: "delivered" });
+
+    if (Items.length === 0) {
+      return res.status(404).json({ message: "No items found" });
+    }
+
+    res.status(200).json(Items);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/saleslists", async (req, res) => {
+  try {
+    const salesOrders = await Salesorders.find({ status: "delivered" });
+
+    if (salesOrders.length === 0) {
+      return res.status(404).json({ message: "No sales orders found" });
+    }
+
+    const salesReturnOrders = await salesReturns.find({});
+    const salesReturnIds = salesReturnOrders.map((order) => order.salesid);
+
+    const filteredSalesOrders = salesOrders.filter(
+      (order) => !salesReturnIds.includes(order._id.toString())
+    );
+
+    res.status(200).json(filteredSalesOrders);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//INVOICE
+app.post("/invoice", (req, res) => {
+  const { invoiceDate, customerId, itemName, quantity, salesId, amount } =
+    req.body;
+
+  const newInvoice = new Invoice({
+    invoiceDate,
+    customerId,
+    itemName,
+    quantity,
+    salesId,
+    amount,
+  });
+
+  newInvoice
+    .save()
+    .then(() => {
+      Salesorders.findByIdAndUpdate(salesId, { status: "delivered" })
+        .then(() => {
+          // console.log("Sales order status updated to delivered");
+          res.status(200).send("Invoice added successfully!");
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).send(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send(err);
+    });
+});
+
+// RETURN SALES
+
+app.post("/salesreturn", async (req, res) => {
+  const { salesid, date, reason, status } = req.body;
+
+  try {
+    const newSalesReturn = new salesReturns({
+      salesid,
+      date,
+      reason,
+      status,
+    });
+
+    const savedSalesReturn = await newSalesReturn.save();
+    console.log(savedSalesReturn);
+    res.status(200).send("Sales return record added successfully!");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
+
+// SALES RETURN LIST
+app.get("/salesreturns", async (req, res) => {
+  try {
+    const Items = await salesReturns.find({ status: "Returned" });
+    res.json(Items);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.put("/salesreturns/:id", async (req, res) => {
+  try {
+    const salesReturn = await salesReturns.findById(req.params.id);
+
+    if (!salesReturn) {
+      return res.status(404).json({ message: "Sales return not found" });
+    }
+
+    salesReturn.status = "approved";
+    await salesReturn.save();
+
+    res.status(200).json(salesReturn);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
   }
 });
 

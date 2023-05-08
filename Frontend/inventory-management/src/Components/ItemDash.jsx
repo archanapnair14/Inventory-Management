@@ -62,15 +62,10 @@ const Editsdash = () => {
                   <TableCell>{item.unit}</TableCell>
                   <TableCell>{item.category}</TableCell>
                   <TableCell>
-                    {/* {button.itemid == item._id ? (
-                      <Link to={`/Inventory/${item._id}`}>
-                        Update
-                      </Link>
-                    ) : ( */}
+                    
                       <Link to={`/Inventory/${item._id}`}>
                         Edit
                       </Link>
-                    {/* )} */}
                   </TableCell>
                 </TableRow>
               ))}
