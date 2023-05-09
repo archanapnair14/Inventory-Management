@@ -227,7 +227,7 @@ export default function Sidemenus() {
               </ListItemIcon>
               <ListItemText
                 primary="Items"
-                sx={{ opacity: open ? 1 : 0, color: "#fff" }}
+                sx={{ opacity: open ? 1 : 0, color: "#fff"}}
               />
             </ListItemButton>
           </ListItem>

@@ -36,7 +36,7 @@ const ViewsalesReturns = () => {
     })
       .then((response) => {
         setStatus(response.data.status);
-        navigate('/page')
+        navigate('/')
       })
       .catch((error) => {
         console.log(error);

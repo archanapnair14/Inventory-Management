@@ -7,10 +7,6 @@ import AddItem from "./Components/NewItem";
 import Editsdash from "./Components/ItemDash";
 import AddInventoryAdjustment from "./Components/AddInventoryAdjustment";
 import ShowInventory from "./Components/ShowInventory";
-import SignUp from "./Components/SignUp";
-import Login from "./Components/SignIn";
-import Pages from "./Components/Pages";
-import Page from "./Components/Page";
 import AddCustomer from "./Components/AddCustomer";
 import TotalCustomers from "./Components/TotalCustomers";
 import EditCustomer from "./Components/EditCustomer";
@@ -51,26 +47,28 @@ function App() {
         <Route exact path="/sales" element={<NewSalesOrder />} />
         <Route exact path="/shipment" element={<AddPackages />} />
         <Route exact path="/challans" element={<DeliveryChallans />} />
-        <Route exact path="/addvendor" element={<AddVendor/>} />
-        <Route exact path="/allvendors" element={<Allvendors/>} />
-        <Route exact path="/purchase" element={<AddPurchase/>} />
-        <Route exact path="/payments" element={<VendorPay/>} />
-        <Route exact path="/allpayments" element={<Payments/>} />
-        <Route exact path="/challan_generate/:id" element={<AddDeliveryChallan/>} />
-        <Route exact path="/vendors/:id" element={<Editvendor/>}/>
-        <Route exact path="/deliverychallans" element={<DeliveryChallanDetails/>}/>
-        <Route exact path="/allinvoice" element={<AllInvoices/>}/>
-        <Route exact path="/pay" element={<PaymentsRecievded/>}/>
-        <Route exact path="/salereturn" element={<SalesReturns/>}/>
-        <Route exact path="/viewsale" element={<ViewsalesReturns/>}/>
-        <Route exact path="/addcredit" element={<AddCreditNote/>}/>
-
-
-
-
-
-
-        </Routes>
+        <Route exact path="/addvendor" element={<AddVendor />} />
+        <Route exact path="/allvendors" element={<Allvendors />} />
+        <Route exact path="/purchase" element={<AddPurchase />} />
+        <Route exact path="/payments" element={<VendorPay />} />
+        <Route exact path="/allpayments" element={<Payments />} />
+        <Route
+          exact
+          path="/challan_generate/:id"
+          element={<AddDeliveryChallan />}
+        />
+        <Route exact path="/vendors/:id" element={<Editvendor />} />
+        <Route
+          exact
+          path="/deliverychallans"
+          element={<DeliveryChallanDetails />}
+        />
+        <Route exact path="/allinvoice" element={<AllInvoices />} />
+        <Route exact path="/pay" element={<PaymentsRecievded />} />
+        <Route exact path="/salereturn" element={<SalesReturns />} />
+        <Route exact path="/viewsale" element={<ViewsalesReturns />} />
+        <Route exact path="/addcredit" element={<AddCreditNote />} />
+      </Routes>
     </>
   );
 }
