@@ -18,30 +18,37 @@ import {
 import { useNavigate } from "react-router-dom";
 import Sidemenus from "./Dashboard";
 
-const ViewsalesReturns = () => {
+const AddCreditNote = () => {
   const [items, setItems] = useState([]);
-  const [status, setStatus] = useState();
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const cdate = currentDate.toLocaleString();
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/salesreturns").then((response) => {
+    Axios.get("http://localhost:3001/salesreturn").then((response) => {
       setItems(response.data);
       console.log(response.data);
     });
   }, []);
 
-  const approve = (item) => {
-    Axios.put(`http://localhost:3001/salesreturns/${item._id}`, {
-      status: "approved",
-    })
+  const credit = (item) => {
+    const data = {
+      CreditID: item.salesid,
+      reason: item.reason,
+      creditNoteDate:cdate,
+    };
+    Axios.post("http://localhost:3001/credit", data)
       .then((response) => {
-        setStatus(response.data.status);
-        navigate('/page')
+        console.log(response);
+        navigate('/')
       })
       .catch((error) => {
         console.log(error);
       });
-  };
+  };  
+  
+
   return (
     <Box
     sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 10 }}
@@ -50,7 +57,7 @@ const ViewsalesReturns = () => {
     {/* <Grid container spacing={3}> */}
       <Grid item xs={10} p={3}>
         <Typography variant="h6" align="center" gutterBottom>
-          SALES -RETURNS 
+          SALES - RETURNS -CREDIT
         </Typography>
       </Grid>
       <Grid item xs={6} mt={4}>
@@ -69,8 +76,8 @@ const ViewsalesReturns = () => {
                   <TableCell>{item.salesid}</TableCell>
                   <TableCell>{item.reason}</TableCell>
                   <TableCell>
-                    <Button variant="contained" onClick={() => approve(item)}>
-                      APPROVE
+                    <Button variant="contained" onClick={() => credit(item)}>
+                      ADD CREDIT
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -84,4 +91,4 @@ const ViewsalesReturns = () => {
   );
 };
 
-export default ViewsalesReturns;
+export default AddCreditNote;

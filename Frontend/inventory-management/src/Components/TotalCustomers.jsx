@@ -13,11 +13,15 @@ import {
   Button,
   Typography,
   Grid,
+  Box
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
 
 const TotalCustomers = () => {
   const [customer, setCustomer] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     Axios.get("http://localhost:3001/allcustomers").then((response) => {
@@ -38,7 +42,10 @@ const TotalCustomers = () => {
   };
   return (
     <>
-      <Grid container spacing={3}>
+        <Box sx={{display:"flex",backgroundColor:'beige',height:900,mt:10}}>
+      <Sidemenus/>
+
+      {/* <Grid container spacing={3}> */}
         <Grid item xs={6} mt={4}>
           <Typography variant="h5" align="center" gutterBottom>
             ALL - CUSTOMERS
@@ -76,7 +83,8 @@ const TotalCustomers = () => {
             </Table>
           </TableContainer>
         </Grid>
-      </Grid>
+      {/* </Grid> */}
+      </Box>
     </>
   );
 };

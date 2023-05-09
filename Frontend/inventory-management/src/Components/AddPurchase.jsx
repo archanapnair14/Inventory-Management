@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
+import Sidemenus from "./Dashboard";
 
 const AddPurchase = () => {
   const [vendor, setVendor] = useState("");
@@ -52,12 +53,15 @@ const AddPurchase = () => {
       amount,
       status,
     }).then(() => {
-      navigate("/page");
+      navigate("/");
     });
   };
   return (
     <>
-      <Box sx={{ display: "flex", backgroundColor: "lightblue", height: 900 }}>
+      <Box
+        sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 5 }}
+      >
+        <Sidemenus />
         <Container maxWidth="xs">
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box

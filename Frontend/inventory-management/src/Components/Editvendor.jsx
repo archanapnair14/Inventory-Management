@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
-import { TextField, Button, Container, Grid, Typography } from "@mui/material";
+import { TextField, Button, Container, Grid, Typography,Box } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Axios from "axios";
+import Sidemenus from "./Dashboard";
 
 const Editvendor = () => {
   const [customer, setcustomer] = useState("");
@@ -46,6 +47,8 @@ const Editvendor = () => {
     }
   };
   return (
+    <Box sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 5 }}>
+    <Sidemenus />
     <Container maxWidth="sm" sx={{ mt: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
@@ -113,6 +116,7 @@ const Editvendor = () => {
         </Button>
       </form>
     </Container>
+    </Box>
   );
 };
 

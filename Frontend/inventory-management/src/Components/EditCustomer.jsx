@@ -1,8 +1,16 @@
 import { useForm } from "react-hook-form";
-import { TextField, Button, Container, Grid, Typography } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Grid,
+  Typography,
+  Box,
+} from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Axios from "axios";
+import Sidemenus from "./Dashboard";
 
 const EditCustomer = () => {
   const [customer, setcustomer] = useState("");
@@ -46,61 +54,66 @@ const EditCustomer = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 3 }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={2}>
-          <Typography
-            gutterBottom
-            variant="h5"
-            fontFamily="cursive"
-            component="div"
+    <Box
+      sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 10 }}
+    >
+      <Sidemenus />
+      <Container maxWidth="sm" sx={{ mt: 3 }}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={2}>
+            <Typography
+              gutterBottom
+              variant="h5"
+              fontFamily="cursive"
+              component="div"
+            >
+              EDIT - CUSTOMER
+            </Typography>
+            <Grid item xs={12}>
+              <TextField
+                {...register("name", { required: true })}
+                variant="outlined"
+                fullWidth
+                label="Name"
+                defaultValue={customer?.name}
+                error={Boolean(errors.name)}
+                helperText={errors.name && "Name is required"}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("email", { required: true })}
+                variant="outlined"
+                fullWidth
+                label="Email"
+                defaultValue={customer?.email}
+                error={Boolean(errors.email)}
+                helperText={errors.email && "Email is required"}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                {...register("address", { required: true })}
+                variant="outlined"
+                fullWidth
+                label="Address"
+                defaultValue={customer?.address}
+                error={Boolean(errors.address)}
+                helperText={errors.address && "Address is required"}
+              />
+            </Grid>
+          </Grid>
+          <Button
+            sx={{ mt: 3 }}
+            type="submit"
+            variant="contained"
+            color="primary"
           >
-            EDIT - CUSTOMER
-          </Typography>
-          <Grid item xs={12}>
-            <TextField
-              {...register("name", { required: true })}
-              variant="outlined"
-              fullWidth
-              label="Name"
-              defaultValue={customer?.name}
-              error={Boolean(errors.name)}
-              helperText={errors.name && "Name is required"}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              {...register("email", { required: true })}
-              variant="outlined"
-              fullWidth
-              label="Email"
-              defaultValue={customer?.email}
-              error={Boolean(errors.email)}
-              helperText={errors.email && "Email is required"}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              {...register("address", { required: true })}
-              variant="outlined"
-              fullWidth
-              label="Address"
-              defaultValue={customer?.address}
-              error={Boolean(errors.address)}
-              helperText={errors.address && "Address is required"}
-            />
-          </Grid>
-        </Grid>
-        <Button
-          sx={{ mt: 3 }}
-          type="submit"
-          variant="contained"
-          color="primary"
-        >
-          UPDATE
-        </Button>
-      </form>
-    </Container>
+            UPDATE
+          </Button>
+        </form>
+      </Container>
+    </Box>
   );
 };
 

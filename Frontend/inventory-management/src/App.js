@@ -29,6 +29,7 @@ import AllInvoices from "./Components/AllInvoices";
 import PaymentsRecievded from "./Components/PaymentsRecievded";
 import SalesReturns from "./Components/SalesReturns";
 import ViewsalesReturns from "./Components/ViewsalesReturns";
+import AddCreditNote from "./Components/AddCreditNote";
 
 function App() {
   return (
@@ -44,8 +45,6 @@ function App() {
           element={<AddInventoryAdjustment />}
         />
         <Route exact path="/InventoryList" element={<ShowInventory />} />
-        <Route exact path="/signup" element={<SignUp />} />
-        <Route exact path="/login" element={<Login />} />
         <Route exact path="/pages" element={<Pages />} />
         <Route exact path="/page" element={<Page />} />
         <Route exact path="/customer" element={<AddCustomer />} />
@@ -66,6 +65,8 @@ function App() {
         <Route exact path="/pay" element={<PaymentsRecievded/>}/>
         <Route exact path="/salereturn" element={<SalesReturns/>}/>
         <Route exact path="/viewsale" element={<ViewsalesReturns/>}/>
+        <Route exact path="/addcredit" element={<AddCreditNote/>}/>
+
 
 
 

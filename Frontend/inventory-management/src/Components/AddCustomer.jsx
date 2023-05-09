@@ -3,11 +3,14 @@ import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
+import Sidemenus from "./Dashboard";
 
 const AddCustomer = () => {
   const navigate = useNavigate();
@@ -34,13 +37,22 @@ const AddCustomer = () => {
   };
   return (
     <>
-      <Box sx={{ display: "flex", backgroundColor: "lightblue", height: 900 }}>
+      <Box
+        sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 10 }}
+      >
+        <Sidemenus />
+
         <Container maxWidth="xs">
+          <Grid container spacing={2} mt={3} mr={9}>
+            <Link to="/customers">
+              <Button variant="contained">Customers List</Button>
+            </Link>
+          </Grid>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box
               mb={2}
               sx={{
-                marginTop: 8,
+                marginTop: 4,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",

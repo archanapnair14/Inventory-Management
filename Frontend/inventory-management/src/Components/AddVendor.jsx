@@ -1,8 +1,17 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { TextField, Button, Box, Container, Typography } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Box,
+  Container,
+  Typography,
+  Grid,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
+import Sidemenus from "./Dashboard";
+import { Link } from "react-router-dom";
 
 const AddVendor = () => {
   const navigate = useNavigate();
@@ -32,7 +41,10 @@ const AddVendor = () => {
   };
   return (
     <>
-      <Box sx={{ display: "flex", backgroundColor: "lightblue", height: 900 }}>
+      <Box
+        sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 5 }}
+      >
+        <Sidemenus />
         <Container maxWidth="xs">
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box
@@ -133,6 +145,11 @@ const AddVendor = () => {
             </Button>
           </form>
         </Container>
+        <Grid container spacing={2}  ml={9} mt={9}>
+          <Link to="/allvendors">
+            <Button variant="contained">All Vendors</Button>
+          </Link>
+        </Grid>
       </Box>
     </>
   );

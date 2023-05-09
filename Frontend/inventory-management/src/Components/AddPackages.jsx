@@ -10,9 +10,11 @@ import {
   Button,
   InputLabel,
   Grid,
+  Box,
 } from "@mui/material";
 import Axios from "axios";
 import { useForm } from "react-hook-form";
+import Sidemenus from "./Dashboard";
 
 const AddPackages = () => {
   const {
@@ -76,6 +78,8 @@ const AddPackages = () => {
   };
 
   return (
+    <Box sx={{display:"flex",backgroundColor:'beige',height:900,mt:10}}>
+      <Sidemenus/>
     <Container maxWidth="sm" sx={{ mt: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
@@ -167,6 +171,7 @@ const AddPackages = () => {
         </Grid>
       </form>
     </Container>
+    </Box>
   );
 };
 

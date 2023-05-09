@@ -13,9 +13,11 @@ import {
   Button,
   Typography,
   Grid,
+  Box,
 } from "@mui/material";
 import jsPDF from "jspdf";
 import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
 
 const AllInvoices = () => {
   const [items, setItems] = useState([]);
@@ -75,61 +77,61 @@ const AllInvoices = () => {
   };
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={10}>
-        <Typography variant="h6" align="center" gutterBottom>
-          INVOICES
-        </Typography>
-      </Grid>
-      <Grid item xs={10}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>CUSTOMER NAME</TableCell>
-                <TableCell>ADDRESS</TableCell>
-                <TableCell>EMAIL</TableCell>
-                <TableCell>ITEM NAME</TableCell>
-                <TableCell>UNIT</TableCell>
-                <TableCell>PRICE</TableCell>
-                <TableCell>INVOICE</TableCell>
-                <TableCell>PDF BILL</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.map((item) => (
-                <TableRow key={item._id}>
-                  {fetchCustomerName(item.cid)}
-                  <TableCell>{customer?.name}</TableCell>
-                  <TableCell>{item.address}</TableCell>
-                  <TableCell>{item.customername}</TableCell>
-                  {fetchItemName(item.itemname)}
-                  <TableCell>{data?.itemName}</TableCell>
-                  <TableCell>{item.squantity}</TableCell>
-                  <TableCell>{item.amount}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      onClick={() => addInvoice(item)}
-                    >
-                      ADD INVOICE
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="contained"
-                      onClick={() => generatePDF(item)}
-                    >
-                      Download BILL
-                    </Button>
-                  </TableCell>
+    <Box
+      sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 10 }}
+    >
+      <Sidemenus />
+      <Grid container spacing={3} mt={2}>
+        <Grid item xs={10}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>CUSTOMER NAME</TableCell>
+                  <TableCell>ADDRESS</TableCell>
+                  <TableCell>EMAIL</TableCell>
+                  <TableCell>ITEM NAME</TableCell>
+                  <TableCell>UNIT</TableCell>
+                  <TableCell>PRICE</TableCell>
+                  <TableCell>INVOICE</TableCell>
+                  <TableCell>PDF BILL</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {items.map((item) => (
+                  <TableRow key={item._id}>
+                    {fetchCustomerName(item.cid)}
+                    <TableCell>{customer?.name}</TableCell>
+                    <TableCell>{item.address}</TableCell>
+                    <TableCell>{item.customername}</TableCell>
+                    {fetchItemName(item.itemname)}
+                    <TableCell>{data?.itemName}</TableCell>
+                    <TableCell>{item.squantity}</TableCell>
+                    <TableCell>{item.amount}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        onClick={() => addInvoice(item)}
+                      >
+                        ADD INVOICE
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        onClick={() => generatePDF(item)}
+                      >
+                        Download BILL
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 

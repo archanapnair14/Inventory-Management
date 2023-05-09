@@ -1,7 +1,15 @@
-import React from "react";
+import React from 'react'
+import { Box } from '@mui/system'
+import Sidemenus from './Dashboard'
 
 const Home = () => {
-  return <div>Home</div>;
-};
+  return (
+<>
+<Box sx={{display:"flex",backgroundColor:'beige',height:900}}>
 
-export default Home;
+<Sidemenus/>
+</Box>
+</>  )
+}
+
+export default Home

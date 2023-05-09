@@ -13,8 +13,10 @@ import {
   Button,
   Typography,
   Grid,
+  Box,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import Sidemenus from "./Dashboard";
 
 const Allvendors = () => {
   const [name, setName] = useState([]);
@@ -28,41 +30,39 @@ const Allvendors = () => {
   }, []);
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Typography variant="h4" align="center" gutterBottom>
-          ALL- VENDORS
-        </Typography>
-      </Grid>
-      <Grid item xs={10}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>VENDOR NAME</TableCell>
-                <TableCell>ADRESS</TableCell>
-                <TableCell>EMAIL</TableCell>
-                <TableCell>PHONE NUMBER</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {name.map((item) => (
-                <TableRow key={item._id}>
-                  <TableCell>{item.vendorname}</TableCell>
-                  <TableCell>{item.address}</TableCell>
-                  <TableCell>{item.email}</TableCell>
-                  <TableCell>{item.vphno}</TableCell>
-                  <TableCell>
-                    <Link to={`/vendors/${item._id}`}>Edit</Link>
-                  </TableCell>
+    <Box sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 5 }}>
+      <Sidemenus />
+      <Grid container spacing={3}>
+        <Grid item xs={10} mt={6}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>VENDOR NAME</TableCell>
+                  <TableCell>ADRESS</TableCell>
+                  <TableCell>EMAIL</TableCell>
+                  <TableCell>PHONE NUMBER</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {name.map((item) => (
+                  <TableRow key={item._id}>
+                    <TableCell>{item.vendorname}</TableCell>
+                    <TableCell>{item.address}</TableCell>
+                    <TableCell>{item.email}</TableCell>
+                    <TableCell>{item.vphno}</TableCell>
+                    <TableCell>
+                      <Link to={`/vendors/${item._id}`}>Edit</Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 

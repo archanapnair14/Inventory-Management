@@ -1,9 +1,12 @@
 import { useForm } from "react-hook-form";
-import { TextField, Button, Container, Grid, Typography } from "@mui/material";
+import { TextField, Button, Container, Grid, Typography,Box} from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
 
 const CreateItemGroup = () => {
   const [file, setFileData] = useState(null);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -32,13 +35,16 @@ const CreateItemGroup = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        navigate('/')
       });
 
     reset();
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 3 }}>
+    <Box sx={{display:"flex",backgroundColor:'beige',height:900,mt:5}}>
+      <Sidemenus/>
+    <Container maxWidth="sm" sx={{ mt: 8 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           <Typography
@@ -94,6 +100,7 @@ const CreateItemGroup = () => {
         </Button>
       </form>
     </Container>
+    </Box>
   );
 };
 

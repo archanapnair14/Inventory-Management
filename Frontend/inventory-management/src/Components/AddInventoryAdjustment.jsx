@@ -8,9 +8,12 @@ import {
   Typography,
   Select,
   MenuItem,
+  Box
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
 
 const AddInventoryAdjustment = () => {
   const [file, setFileData] = useState(null);
@@ -19,6 +22,7 @@ const AddInventoryAdjustment = () => {
   const cdate = currentDate.toLocaleString();
   const { id } = useParams();
   console.log(id);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -77,11 +81,15 @@ const AddInventoryAdjustment = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        navigate('/')
       });
 
     reset();
   };
   return (
+    <Box sx={{ display: "flex", backgroundColor: "beige", height: 900,mt:10 }}>
+    <Sidemenus />
+
     <Container maxWidth="sm" sx={{ mt: 3 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
@@ -202,6 +210,7 @@ const AddInventoryAdjustment = () => {
         </Button>
       </form>
     </Container>
+    </Box>
   );
 };
 

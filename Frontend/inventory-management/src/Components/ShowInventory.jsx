@@ -11,13 +11,17 @@ import {
   Button,
   Typography,
   Grid,
+  Box
 } from "@mui/material";
 import Axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
 
 const ShowInventory = () => {
   const [items, setItem] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
+  const navigate = useNavigate()
 
   useEffect(() => {
     Axios.get(`http://localhost:3001/inventory`).then((response) => {
@@ -53,7 +57,10 @@ const ShowInventory = () => {
   };
   return (
     <>
-      <Grid item xs={6} mt={4}>
+        <Box sx={{display:"flex",backgroundColor:'beige',height:900,mt:3}}>
+      <Sidemenus/>
+
+      <Grid item xs={6} mt={8}>
         <TextField
           id="date"
           label="Select date"
@@ -66,13 +73,13 @@ const ShowInventory = () => {
         />
       </Grid>
 
-      <Grid container spacing={3}>
-        <Grid item xs={6} mt={4}>
+      <Grid container spacing={3} p={5}>
+        {/* <Grid item xs={6} mt={8}>
           <Typography variant="h5" align="center" gutterBottom>
             INVENTORY-ADJUSTMENTS
           </Typography>
-        </Grid>
-        <Grid item xs={10}>
+        </Grid> */}
+        <Grid item xs={12} mt={10}>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -120,6 +127,7 @@ const ShowInventory = () => {
           </TableContainer>
         </Grid>
       </Grid>
+      </Box>
     </>
   );
 };

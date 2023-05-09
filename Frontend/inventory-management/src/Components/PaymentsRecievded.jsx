@@ -13,8 +13,10 @@ import {
   Button,
   Typography,
   Grid,
+  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
 const PaymentsRecievded = () => {
   const [items, setItems] = useState([]);
   const [customer, setCustomer] = useState();
@@ -45,13 +47,16 @@ const PaymentsRecievded = () => {
   };
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={10}>
+    <Box
+      sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 10 }}
+    >
+      <Sidemenus />
+      <Grid item xs={10} p={3}>
         <Typography variant="h6" align="center" gutterBottom>
           CUSTOMER - PAYMENTS
         </Typography>
       </Grid>
-      <Grid item xs={10}>
+      <Grid item xs={10} mt={4}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -81,7 +86,7 @@ const PaymentsRecievded = () => {
           </Table>
         </TableContainer>
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 

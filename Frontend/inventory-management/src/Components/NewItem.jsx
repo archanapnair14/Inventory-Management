@@ -7,10 +7,15 @@ import {
   Typography,
   Select,
   MenuItem,
+  Box,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import Axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
+
 const AddItem = () => {
+  const navigate = useNavigate();
   const [file, setFileData] = useState(null);
   const [categories, setCategory] = useState([]);
 
@@ -60,12 +65,15 @@ const AddItem = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        navigate('/')
       });
 
     reset();
   };
   return (
-    <Container maxWidth="sm" sx={{ mt: 3 }}>
+    <Box sx={{display:"flex",backgroundColor:'beige',height:900,mt:3}}>
+      <Sidemenus/>
+    <Container maxWidth="sm" sx={{ mt: 10 }}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           <Typography
@@ -253,6 +261,7 @@ const AddItem = () => {
         </Button>
       </form>
     </Container>
+    </Box>
   );
 };
 

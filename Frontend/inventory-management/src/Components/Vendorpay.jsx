@@ -13,8 +13,11 @@ import {
   Button,
   Typography,
   Grid,
+  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Sidemenus from "./Dashboard";
+import { Link } from "react-router-dom";
 
 const VendorPay = () => {
   const [payments, setPayments] = useState([]);
@@ -42,7 +45,6 @@ const VendorPay = () => {
     Axios.put(`http://localhost:3001/completed/${id}`, updatedPayment)
       .then((response) => {
         console.log(response.data);
-        // Do something with the updated payment data
       })
       .catch((error) => {
         console.log(error);
@@ -53,13 +55,9 @@ const VendorPay = () => {
   };
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Typography variant="h4" align="center" gutterBottom>
-          VENDOR - PAYMENT
-        </Typography>
-      </Grid>
-      <Grid item xs={10}>
+    <Box sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 5 }}>
+      <Sidemenus />
+      <Grid item xs={12} mt={6}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -93,7 +91,13 @@ const VendorPay = () => {
           </Table>
         </TableContainer>
       </Grid>
-    </Grid>
+      <Grid container spacing={2}  ml={9} mt={9}>
+          <Link to="/allpayments">
+            <Button variant="contained">All Payments</Button>
+          </Link>
+        </Grid>
+    </Box>
+    
   );
 };
 

@@ -20,6 +20,7 @@ const Purchases = require("./model/purchaseSchema");
 const DeliveryChallan = require("./model/deliveryChallans");
 const { Invoice } = require("./model/invoiceModel");
 const { salesReturns } = require("./model/salesReturn");
+const { creditNote } = require("./model/creditNoteModel");
 
 const app = express();
 app.use(BodyParser.json());
@@ -906,6 +907,100 @@ app.put("/salesreturns/:id", async (req, res) => {
   }
 });
 
+// SALES RETURN LIST
+app.get("/salesreturns", async (req, res) => {
+  try {
+    const Items = await salesReturns.find({ status: "Returned" });
+    res.json(Items);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.put("/salesreturns/:id", async (req, res) => {
+  try {
+    const salesReturn = await salesReturns.findById(req.params.id);
+
+    if (!salesReturn) {
+      return res.status(404).json({ message: "Sales return not found" });
+    }
+
+    salesReturn.status = "approved";
+    await salesReturn.save();
+
+    res.status(200).json(salesReturn);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// SALES RETURN LIST
+app.get("/salesreturns", async (req, res) => {
+  try {
+    const Items = await salesReturns.find({ status: "Returned" });
+    res.json(Items);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.put("/salesreturns/:id", async (req, res) => {
+  try {
+    const salesReturn = await salesReturns.findById(req.params.id);
+
+    if (!salesReturn) {
+      return res.status(404).json({ message: "Sales return not found" });
+    }
+
+    salesReturn.status = "approved";
+    await salesReturn.save();
+
+    res.status(200).json(salesReturn);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// SALES CREDIT LIST
+app.get("/salesreturn", async (req, res) => {
+  try {
+    const Items = await salesReturns.find({ status: "approved" });
+    res.json(Items);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// create a new credit note
+app.post("/credit", async (req, res) => {
+  try {
+    const { CreditID, reason, creditNoteDate } = req.body;
+
+    // Save the credit note to the CreditNotes collection
+    const credit = new creditNote({
+      CreditID,
+      reason,
+      creditNoteDate,
+    });
+    const savedCredit = await credit.save();
+
+    // Update the SalesReturns document to mark it as credited
+    const salesReturn = await salesReturns.findOneAndUpdate(
+      { salesid: CreditID },
+      { status: "credited" },
+      { new: true }
+    );
+
+    res.status(200).json(savedCredit);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Server running on port ${port}`));

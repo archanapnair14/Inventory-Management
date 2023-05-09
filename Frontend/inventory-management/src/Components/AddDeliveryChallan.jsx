@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
+import Sidemenus from "./Dashboard";
 
 const AddDeliveryChallan = () => {
   const navigate = useNavigate();
@@ -31,12 +32,15 @@ const AddDeliveryChallan = () => {
     axios
       .post(`http://localhost:3001/deliverychallan/`, { refno,deliverydate,salesId})
       .then(() => {
-        navigate("/page");
+        navigate("/challans");
       });
   };
   return (
     <>
-      <Box sx={{ display: "flex", backgroundColor: "lightblue", height: 900 }}>
+    <Box
+      sx={{ display: "flex", backgroundColor: "beige", height: 900, mt: 10 }}
+    >
+      <Sidemenus />
         <Container maxWidth="xs">
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box
