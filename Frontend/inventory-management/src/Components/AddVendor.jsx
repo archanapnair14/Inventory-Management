@@ -36,7 +36,7 @@ const AddVendor = () => {
       email,
       vphno,
     }).then(() => {
-      navigate("/page");
+      navigate("/");
     });
   };
   return (

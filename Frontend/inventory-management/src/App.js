@@ -45,8 +45,6 @@ function App() {
           element={<AddInventoryAdjustment />}
         />
         <Route exact path="/InventoryList" element={<ShowInventory />} />
-        <Route exact path="/pages" element={<Pages />} />
-        <Route exact path="/page" element={<Page />} />
         <Route exact path="/customer" element={<AddCustomer />} />
         <Route exact path="/customers" element={<TotalCustomers />} />
         <Route exact path="/editcustomer/:id" element={<EditCustomer />} />

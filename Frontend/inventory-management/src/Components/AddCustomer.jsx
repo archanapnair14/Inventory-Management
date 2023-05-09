@@ -32,7 +32,7 @@ const AddCustomer = () => {
     axios
       .post(`http://localhost:3001/customer/`, { name, email, address })
       .then(() => {
-        navigate("/page");
+        navigate("/");
       });
   };
   return (

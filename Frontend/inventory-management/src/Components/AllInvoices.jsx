@@ -68,7 +68,7 @@ const AllInvoices = () => {
       .then((response) => {
         console.log(response);
         alert("Invoice added successfully!");
-        navigate("/page");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
